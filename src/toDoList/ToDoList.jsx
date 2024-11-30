@@ -14,7 +14,7 @@ export default function TodoList() {
   const [newTask, setNewTask] = useState("");
 
   useEffect(() => {
-    // Görev listesi her güncellendiğinde localStorage'e yaz
+    // Görev listesi her güncellendiğinde localStorage'e
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
 
