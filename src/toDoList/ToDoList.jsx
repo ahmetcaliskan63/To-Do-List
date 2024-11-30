@@ -1,29 +1,45 @@
 import "./toDoList.css";
-import React, { useState } from "react";
-import ThumbDown from "@mui/icons-material/ThumbDown";
-import ThumbUp from "@mui/icons-material/ThumbUp";
+import React, { useState, useEffect } from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
 export default function TodoList() {
-  const [tasks, setTasks] = useState([
-    "Eat Breakfast",
-    "Take a shower",
-    "walk the dog",
-  ]);
+  const [tasks, setTasks] = useState(() => {
+    // localStorage'den veriyi oku, yoksa varsayılan bir dizi kullan
+    const savedTasks = localStorage.getItem("tasks");
+    return savedTasks ? JSON.parse(savedTasks) : [];
+  });
+
   const [newTask, setNewTask] = useState("");
+
+  useEffect(() => {
+    // Görev listesi her güncellendiğinde localStorage'e yaz
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
 
   function handleInputChange(event) {
     setNewTask(event.target.value);
   }
+
+  function handleKeyDown(event) {
+    if (event.key === "Enter") {
+      addTask();
+    }
+  }
+
   function addTask() {
     if (newTask.trim() !== "") {
       setTasks((t) => [...t, newTask]);
       setNewTask("");
     }
   }
+
   function deleteTask(index) {
     const updatedTasks = tasks.filter((e, i) => i !== index);
     setTasks(updatedTasks);
   }
+
   function moveTaskUp(index) {
     if (index > 0) {
       const updatedTasks = [...tasks];
@@ -34,6 +50,7 @@ export default function TodoList() {
       setTasks(updatedTasks);
     }
   }
+
   function moveTaskDown(index) {
     if (index < tasks.length - 1) {
       const updatedTasks = [...tasks];
@@ -55,6 +72,7 @@ export default function TodoList() {
           placeholder="Enter a task..."
           value={newTask}
           onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
         />
         <button className="add-button" onClick={addTask}>
           Add
@@ -65,28 +83,28 @@ export default function TodoList() {
           <li key={index}>
             <span className="text">{task}</span>
             <button
-              className="delete-button"
+              className="icon-button"
               onClick={() => {
                 deleteTask(index);
               }}
             >
-              Delete
+              <DeleteIcon className="icon" />
             </button>
             <button
-              className="move-button"
+              className="icon-button"
               onClick={() => {
                 moveTaskUp(index);
               }}
             >
-              <ThumbUp className="icon" />
+              <ArrowUpwardIcon className="icon" />
             </button>
             <button
-              className="move-button"
+              className="icon-button"
               onClick={() => {
                 moveTaskDown(index);
               }}
             >
-              <ThumbDown className="icon" />
+              <ArrowDownwardIcon className="icon" />
             </button>
           </li>
         ))}
