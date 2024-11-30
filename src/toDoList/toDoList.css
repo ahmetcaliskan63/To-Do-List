@@ -106,3 +106,7 @@
   background-color: #000;
   color: red;
 }
+.completed .text {
+  text-decoration: line-through;
+  color: red; /* Kırmızı çizgi için renk */
+}

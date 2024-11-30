@@ -3,10 +3,10 @@ import React, { useState, useEffect } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import CheckIcon from "@mui/icons-material/Check"; // Tamamlandı simgesi
 
 export default function TodoList() {
   const [tasks, setTasks] = useState(() => {
-    // localStorage'den veriyi oku, yoksa varsayılan bir dizi kullan
     const savedTasks = localStorage.getItem("tasks");
     return savedTasks ? JSON.parse(savedTasks) : [];
   });
@@ -14,7 +14,6 @@ export default function TodoList() {
   const [newTask, setNewTask] = useState("");
 
   useEffect(() => {
-    // Görev listesi her güncellendiğinde localStorage'e
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
 
@@ -30,13 +29,13 @@ export default function TodoList() {
 
   function addTask() {
     if (newTask.trim() !== "") {
-      setTasks((t) => [...t, newTask]);
+      setTasks((t) => [...t, { text: newTask, completed: false }]);
       setNewTask("");
     }
   }
 
   function deleteTask(index) {
-    const updatedTasks = tasks.filter((e, i) => i !== index);
+    const updatedTasks = tasks.filter((_, i) => i !== index);
     setTasks(updatedTasks);
   }
 
@@ -62,6 +61,12 @@ export default function TodoList() {
     }
   }
 
+  function toggleComplete(index) {
+    const updatedTasks = [...tasks];
+    updatedTasks[index].completed = !updatedTasks[index].completed;
+    setTasks(updatedTasks);
+  }
+
   return (
     <div className="to-do-list">
       <h1>To Do List</h1>
@@ -80,8 +85,14 @@ export default function TodoList() {
       </div>
       <ol>
         {tasks.map((task, index) => (
-          <li key={index}>
-            <span className="text">{task}</span>
+          <li key={index} className={task.completed ? "completed" : ""}>
+            <span className="text">{task.text}</span>
+            <button
+              className="icon-button"
+              onClick={() => toggleComplete(index)}
+            >
+              <CheckIcon className="icon" />
+            </button>
             <button
               className="icon-button"
               onClick={() => {
